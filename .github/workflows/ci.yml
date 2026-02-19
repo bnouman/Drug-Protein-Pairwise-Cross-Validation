@@ -2,7 +2,7 @@ name: Drug-Protein Interaction CI
 
 on:
   push:
-    branches: ['**']  # Run on every push to any branch
+    branches: ['**']
   pull_request:
     branches: ['**']
 
@@ -55,35 +55,7 @@ jobs:
         
     - name: Check C-index results
       run: |
-        echo "Validating C-index results..."
-        python -c "
-import re
-with open('executed_notebook.ipynb', 'r') as f:
-    content = f.read()
-    
-# Check for LODO C-index
-lodo_match = re.search(r'LODO-CV.*?([0-9]\.[0-9]+)', content, re.IGNORECASE | re.DOTALL)
-if lodo_match:
-    lodo = float(lodo_match.group(1))
-    print(f'✓ LODO C-index found: {lodo}')
-    assert 0.5 <= lodo <= 1.0, f'LODO C-index out of range: {lodo}'
-    
-# Check for LOPO C-index
-lopo_match = re.search(r'LOPO-CV.*?([0-9]\.[0-9]+)', content, re.IGNORECASE | re.DOTALL)
-if lopo_match:
-    lopo = float(lopo_match.group(1))
-    print(f'✓ LOPO C-index found: {lopo}')
-    assert 0.5 <= lopo <= 1.0, f'LOPO C-index out of range: {lopo}'
-    
-# Check for LOOPD C-index
-loopd_match = re.search(r'LOOPD-CV.*?([0-9]\.[0-9]+)', content, re.IGNORECASE | re.DOTALL)
-if loopd_match:
-    loopd = float(loopd_match.group(1))
-    print(f'✓ LOOPD C-index found: {loopd}')
-    assert 0.5 <= loopd <= 1.0, f'LOOPD C-index out of range: {loopd}'
-    
-print('✓ All C-index validations passed')
-"
+        python check_results.py
         
     - name: Generate test report
       if: always()
